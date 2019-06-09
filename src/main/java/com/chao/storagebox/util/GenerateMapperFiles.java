@@ -1,4 +1,4 @@
-package com.chao.storagebox;
+package com.chao.storagebox.util;
 
 import java.io.File;
 import java.io.FileWriter;
