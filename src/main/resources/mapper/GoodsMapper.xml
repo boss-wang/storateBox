@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chao.storagebox.dao.GoodsMapper">
+    <sql id="Base_Column_List">
+   id as id,
+   boxId as boxId,
+   goodsName as goodsName
+ </sql>
+    <insert id="addGoods">
+        insert into goods(id,boxId,goodsName)
+        values (#{id}, #{boxId}, #{goodsName})
+    </insert>
+
+    <update id="updateGoods">
+        update goods
+        set boxId = #{boxId}, goodsName = #{goodsName}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoods">
+        delete from goods
+        where id = #{goodsId}
+    </delete>
+
+    <select id="getGoodsList" resultType="com.chao.storagebox.entity.Goods">
+        SELECT
+        t1.id as id,
+        t2.boxName as boxName,
+        t1.goodsName as goodsName,
+        t3.address as address
+        FROM goods t1
+        LEFT JOIN box t2
+        ON t1.boxid = t2.id
+        LEFT JOIN area t3
+        ON t2.areaId = t3.id
+        <where>
+            <if test="areaId != null and areaId != ''">
+                and t3.id = #{areaId}
+            </if>
+            <if test="boxId != null and boxId != ''">
+                and t2.id = #{boxId}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and t1.goodsName like concat('%', #{goodsName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getGoodsById" resultType="com.chao.storagebox.entity.Goods">
+        SELECT
+        t1.id as id,
+        t2.id as boxId,
+        t3.id as areaId,
+        t1.goodsName as goodsName,
+        t2.boxName as boxName,
+        t3.address as address
+        FROM goods t1
+        LEFT JOIN box t2
+        ON t1.boxid = t2.id
+        LEFT JOIN area t3
+        ON t2.areaId = t3.id
+        where t1.id = #{goodsId}
+    </select>
+</mapper>

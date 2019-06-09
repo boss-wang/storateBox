@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/commons/css/bootstrap.min.css">
+    <style type="text/css">
+        span{
+            vertical-align: middle;
+        }
+        a:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar fixed-top navbar-expand-sm bg-light navbar-light">
+    <ul class="navbar-nav" style="margin: 0 auto;">
+        <li class="nav-item">
+            <a class="nav-link" href="home.html">主页</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addGoods.html">添加物品</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="showArea.html">地区管理</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addArea.html">添加地区</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="showBox.html">箱子管理</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addBox.html">添加箱子</a>
+        </li>
+    </ul>
+</nav>
+
+<div id="showBoxDiv" class="container" style="width: 90%">
+    <h2 class="text-center mb-3">物品列表</h2>
+    <hr />
+    <div class="row">
+    <table class="table table-hover table-sm text-center">
+        <thead>
+        <tr>
+            <th>箱名</th>
+            <th>地区</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="box in boxList" >
+            <td>{{ box.boxName }}</td>
+            <td>{{ box.address }}</td>
+            <td>
+                <a style="color: #007BFF;" v-on:click="updateBox(box.id)">修改</a>
+                <a style="color: #007BFF;" v-on:click="deleteBox(box.id)" class="offset-1">删除</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    </div>
+</div>
+</body>
+<script src="/commons/js/jquery-3.2.1.min.js"></script>
+<script src="/commons/js/bootstrap.min.js"></script>
+<script src="/commons/js/vue.min.js"></script>
+<script>
+    new Vue({
+        el:'#showBoxDiv',
+        data:{
+            boxList:""
+        },
+        methods:{
+            //删除
+            deleteBox:function (id)
+            {
+                if (confirm("确认要删除吗？"))
+                {
+                    var _self = this;
+
+                    $.ajax({
+                        url: "/box",
+                        type:"delete",
+                        data:{
+                            boxId:id
+                        },
+                        async: false,
+                        success: function (res) {
+                            alert("删除成功！");
+
+                            $.get
+                            (
+                                "/boxList",
+                                function (res)
+                                {
+                                    _self.boxList = res;
+                                }
+                            );
+                        },
+                        error: function () {
+                            alert("未知错误！")
+                        }
+                    });
+                }
+            },
+            updateBox:function (id) {
+                window.location.href = "updateBox.html?boxId=" + id;
+            }
+        },
+        beforeCreate:function ()
+        {
+            var _self = this;
+
+            $.get
+            (
+                "/boxList",
+                function (res)
+                {
+                    _self.boxList = res;
+                }
+            );
+        }
+    });
+</script>
+</html>

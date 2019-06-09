@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/commons/css/bootstrap.min.css">
+    <style type="text/css">
+        span {
+            vertical-align: middle;
+        }
+
+        a:hover {
+            cursor: pointer;
+        }
+
+        #close-div {
+            position: fixed;
+
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.8);
+            width: 100%;
+            height: 100%;
+        }
+
+        #close-div div {
+            margin-top: 13%;
+            margin-left: 36%;
+        }
+
+        #close-div div div {
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar fixed-top navbar-expand-sm bg-light navbar-light">
+    <ul class="navbar-nav" style="margin: 0 auto;">
+        <li class="nav-item">
+            <a class="nav-link" href="home.html">主页</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addGoods.html">添加物品</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="showArea.html">地区管理</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addArea.html">添加地区</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="showBox.html">箱子管理</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addBox.html">添加箱子</a>
+        </li>
+    </ul>
+</nav>
+
+
+<div id="close-div" class="container">
+    <div class="row">
+        <div class="col-5 offset-3">
+            <p>提示：删除地区将一并删除其下所有的箱子和物品，确认要删除吗？如果确认，请在下面输入<span class="text-danger">"确认"</span>两字！</p>
+            <p><input type="text" v-model="confirmDel" class="col-11"/></p>
+            <p>
+                <input type="button" class="btn btn-primary col-4" v-on:click="deleteArea" value="确认删除"/>
+                <input type="button" class="btn btn-secondary col-4 offset-3 " v-on:click="cancleDel" value="取消"/>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="showAreaDiv" class="container" style="width: 90%">
+    <h2 class="text-center mb-3">地区列表</h2>
+    <hr/>
+    <div class="row">
+        <table class="table table-hover table-sm text-center">
+            <thead>
+            <tr>
+                <th>地区名</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="area in areaList">
+                <td>{{ area.address }}</td>
+                <td>
+                    <a style="color: #007BFF;" v-on:click="updateArea(area.id)">修改</a>
+                    <a style="color: #007BFF;" v-on:click="goDeleteArea(area.id)" class="offset-1">删除</a>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+<script src="/commons/js/jquery-3.2.1.min.js"></script>
+<script src="/commons/js/bootstrap.min.js"></script>
+<script src="/commons/js/vue.min.js"></script>
+<script>
+    new Vue({
+        el: '#showAreaDiv',
+        data: {
+            areaList: "",
+            confirmDel: "",
+            dataReady: true,
+            delId: ""
+        },
+        methods: {
+            goDeleteArea: function (id) {
+                var _self = this;
+
+                _self.delId = id;
+
+                $(".close-div").show();
+            },
+            cancleDel:function()
+            {
+                alert("shanchu ");
+                var _self = this;
+
+                _self.delId = "";
+
+                $(".close-div").hide();
+            },
+            //删除
+            deleteArea: function () {
+                var _self = this;
+                _self.dataReady = true;
+
+                if (!_self.confirmDel) {
+                    alert("请在输入框中输入'确认'");
+                    _self.dataReady = false;
+                }
+                if (!delId)
+                {
+                    alert("请选择要删除的地区");
+                    _self.dataReady = false;
+                }
+                if (this.dataReady === true) {
+                    $.ajax({
+                        url: "/area",
+                        type: "delete",
+                        data: {
+                            areaId: _self.delId
+                        },
+                        async: false,
+                        success: function (res) {
+                            alert("删除成功！")
+
+                            $.get
+                            (
+                                "/areaList",
+                                function (res) {
+                                    _self.areaList = res;
+                                }
+                            );
+                        },
+                        error: function () {
+                            alert("未知错误！")
+                        }
+                    });
+                }
+            },
+
+            updateArea: function (id) {
+                window.location.href = "updateArea.html?areaId=" + id;
+            }
+        },
+        beforeCreate: function () {
+            var _self = this;
+
+            $.get
+            (
+                "/areaList",
+                function (res) {
+                    _self.areaList = res;
+                }
+            );
+        }
+    });
+</script>
+</html>

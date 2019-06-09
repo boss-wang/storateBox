@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/commons/css/bootstrap.min.css">
+    <style type="text/css">
+        span{
+            vertical-align: middle;
+        }
+        a:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-sm bg-light navbar-light">
+    <ul class="navbar-nav" style="margin: 0 auto;">
+        <li class="nav-item">
+            <a class="nav-link" href="home.html">主页</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addGoods.html">添加物品</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="showArea.html">地区管理</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addArea.html">添加地区</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="showBox.html">箱子管理</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="addBox.html">添加箱子</a>
+        </li>
+    </ul>
+</nav>
+
+<div id="addGoodsDiv" class="container" style="width: 80%">
+    <h2 class="text-center mb-3">添加物品</h2>
+    <hr />
+    <form id="frm">
+        <div class="row">
+            <div class="input-group mb-3 col-6 offset-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">地&nbsp;&nbsp;&nbsp;区</label>
+                </div>
+                <select name="areaId" v-model="areaId" class="form-control">
+                    <option value="">--请选择--</option>
+                    <option v-for="area in areaList" :value="area.id">{{ area.address }}</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <span class="text-danger">{{ areaTip }}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-group mb-3 col-6 offset-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">箱&nbsp;&nbsp;&nbsp;名</label>
+                </div>
+                <select name="boxId" v-model="boxId" class="form-control">
+                    <option value="">--请选择--</option>
+                    <option v-for="box in boxList" :value="box.id">{{ box.boxName }}</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <span class="text-danger">{{ boxTip }}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-group mb-3 col-6 offset-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">品&nbsp;&nbsp;&nbsp;名</label>
+                </div>
+                <input v-model="goodsName" name="goodsName" type="text" class="form-control" placeholder="请输入物品名称">
+            </div>
+            <div class="col-3">
+                <span class="text-danger">{{ goodsTip }}</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-group col-6 offset-3">
+                <input type="button" class="btn btn-primary col-5" v-on:click="addGoods" value="确认添加" />
+                <input type="button" class="btn btn-secondary col-5 offset-2 " v-on:click="goBack" value="返回"/>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script src="/commons/js/jquery-3.2.1.min.js"></script>
+<script src="/commons/js/bootstrap.min.js"></script>
+<script src="/commons/js/vue.min.js"></script>
+<script>
+    new Vue({
+        el: '#addGoodsDiv',
+        data:{
+            goodsTip:'',
+            areaList:'',
+            boxList:"",
+            areaId:"",
+            boxId:"",
+            areaTip:"",
+            boxTip:"",
+
+            goodsName:"",
+            dataReady:true
+        },
+        methods:{
+            addGoods:function () {
+                var _self = this;
+                _self.goodsTip = '';
+                _self.areaTip = '';
+                _self.boxTip = '';
+                _self.dataReady = true;
+                if (!_self.goodsName)
+                {
+                    _self.goodsTip = '请输入物品名称';
+                    _self.dataReady = false;
+                }
+                if (_self.areaId == "")
+                {
+                    _self.areaTip = '请选择地区';
+                    _self.dataReady = false;
+                }
+                if (_self.boxId == "")
+                {
+                    _self.boxTip = '请选择箱子';
+                    _self.dataReady = false;
+                }
+
+
+                if(this.dataReady === true)
+                {
+                    $.ajax({
+                        url: "/goods",
+                        type:"post",
+                        data: $('#frm').serialize(),
+                        async: false,
+                        success:function (res)
+                        {
+                            alert("添加成功");
+                            window.location.href="home.html";
+                        }
+                    });
+                }
+            },
+            goBack:function () {
+                window.history.go(-1);
+            }
+        },
+        watch : {
+            areaId : function (val) {
+                var _self = this;
+
+                _self.areaId = val;
+                _self.boxId = "";
+
+                $.get
+                (
+                    "/boxList?areaId=" + val,
+                    function (res)
+                    {
+                        _self.boxList = res;
+                    }
+                );
+            }
+        },
+        beforeCreate:function ()
+        {
+            var _self = this;
+
+            $.get
+            (
+                "/areaList",
+                function (res)
+                {
+                    _self.areaList = res;
+                }
+            );
+
+            $.get
+            (
+                "/boxList",
+                function (res)
+                {
+                    _self.boxList = res;
+                }
+            );
+        }
+    });
+</script>
+</html>

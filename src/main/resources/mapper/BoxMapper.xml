@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chao.storagebox.dao.BoxMapper">
+    <sql id="Base_Column_List">
+   box.id as id,
+   box.boxName as boxName,
+   box.areaId as areaId,
+   area.address as address
+ </sql>
+    <insert id="addBox">
+        insert into box (id, boxName, areaId)
+        values (#{id}, #{boxName}, #{areaId});
+    </insert>
+    <update id="updateBox">
+        update box
+        set boxName = #{boxName}, areaId = #{areaId}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBox">
+        delete from box
+        where id = #{boxId}
+    </delete>
+
+    <select id="getBoxList" resultType="com.chao.storagebox.entity.Box">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM box
+        LEFT JOIN area
+        ON box.areaId = area.id
+        <if test="areaId != null and areaId != ''">
+            where box.areaId = #{areaId}
+        </if>
+    </select>
+
+    <select id="getBoxById" resultType="com.chao.storagebox.entity.Box">
+        SELECT
+        box.id as id,
+        box.boxName as boxName,
+        box.areaId as areaId
+        FROM box
+        where id = #{boxId}
+    </select>
+</mapper>
