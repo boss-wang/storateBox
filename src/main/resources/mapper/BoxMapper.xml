@@ -22,6 +22,11 @@
         where id = #{boxId}
     </delete>
 
+    <delete id="deleteBoxByAreaId">
+        delete from box
+        where areaId = #{areaId}
+    </delete>
+
     <select id="getBoxList" resultType="com.chao.storagebox.entity.Box">
         SELECT
         <include refid="Base_Column_List"/>

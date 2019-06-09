@@ -13,6 +13,8 @@ public interface GoodsMapper
 
     void deleteGoods(@Param("goodsId") String goodsId);
 
+    void deleteGoodsByBoxId(@Param("boxId") String boxId);
+
     void addGoods(Goods goods);
 
     void updateGoods(Goods goods);

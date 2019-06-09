@@ -15,7 +15,7 @@
 
         #close-div {
             position: fixed;
-
+            display: none;
             z-index: 100;
             background: rgba(255, 255, 255, 0.8);
             width: 100%;
@@ -24,7 +24,7 @@
 
         #close-div div {
             margin-top: 13%;
-            margin-left: 36%;
+            margin-left: 16%;
         }
 
         #close-div div div {
@@ -60,20 +60,23 @@
 </nav>
 
 
-<div id="close-div" class="container">
-    <div class="row">
-        <div class="col-5 offset-3">
-            <p>提示：删除地区将一并删除其下所有的箱子和物品，确认要删除吗？如果确认，请在下面输入<span class="text-danger">"确认"</span>两字！</p>
-            <p><input type="text" v-model="confirmDel" class="col-11"/></p>
-            <p>
-                <input type="button" class="btn btn-primary col-4" v-on:click="deleteArea" value="确认删除"/>
-                <input type="button" class="btn btn-secondary col-4 offset-3 " v-on:click="cancleDel" value="取消"/>
-            </p>
-        </div>
-    </div>
-</div>
+
 
 <div id="showAreaDiv" class="container" style="width: 90%">
+
+    <div id="close-div" class="container">
+        <div class="row">
+            <div class="col-5">
+                <p>提示：删除地区将一并删除其下所有的箱子和物品，确认要删除吗？如果确认，请在下面输入<span class="text-danger">"确认"</span>两字！</p>
+                <p><input type="text" v-model="confirmDel" class="col-11"/></p>
+                <p>
+                    <input type="button" class="btn btn-primary col-4" v-on:click="deleteArea" value="确认删除"/>
+                    <input type="button" class="btn btn-secondary col-4 offset-3 " v-on:click="cancleDel" value="取消"/>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <h2 class="text-center mb-3">地区列表</h2>
     <hr/>
     <div class="row">
@@ -116,27 +119,26 @@
 
                 _self.delId = id;
 
-                $(".close-div").show();
+                $("#close-div").show();
             },
             cancleDel:function()
             {
-                alert("shanchu ");
                 var _self = this;
 
                 _self.delId = "";
 
-                $(".close-div").hide();
+                $("#close-div").hide();
             },
             //删除
             deleteArea: function () {
                 var _self = this;
                 _self.dataReady = true;
 
-                if (!_self.confirmDel) {
+                if (_self.confirmDel !== "确认") {
                     alert("请在输入框中输入'确认'");
                     _self.dataReady = false;
                 }
-                if (!delId)
+                if (!_self.delId)
                 {
                     alert("请选择要删除的地区");
                     _self.dataReady = false;
@@ -150,8 +152,8 @@
                         },
                         async: false,
                         success: function (res) {
-                            alert("删除成功！")
-
+                            alert("删除成功！");
+                            $("#close-div").hide();
                             $.get
                             (
                                 "/areaList",

@@ -15,4 +15,6 @@ public interface BoxMapper {
 	int updateBox(Box box);
 
 	int deleteBox(@Param("boxId") String boxId);
+
+	int deleteBoxByAreaId(@Param("areaId") String areaId);
 }

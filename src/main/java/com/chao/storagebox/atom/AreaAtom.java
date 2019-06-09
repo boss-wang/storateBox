@@ -1,6 +1,9 @@
 package com.chao.storagebox.atom;
 
 
+import com.chao.storagebox.dao.BoxMapper;
+import com.chao.storagebox.dao.GoodsMapper;
+import com.chao.storagebox.entity.Box;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +13,7 @@ import com.chao.storagebox.entity.Area;
 import com.chao.storagebox.dao.AreaMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -17,6 +21,12 @@ public class AreaAtom
 {
     @Resource
     private AreaMapper areaMapper;
+
+    @Resource
+    private BoxMapper boxMapper;
+
+    @Resource
+    private GoodsMapper goodsMapper;
 
     public List<Area> getAreaList()
     {
@@ -40,6 +50,14 @@ public class AreaAtom
 
     public boolean deleteArea(String areaId)
     {
-        return areaMapper.deleteArea(areaId) > 0;
+        List<Box> boxList = boxMapper.getBoxList(areaId);
+
+        boxList.forEach(box -> goodsMapper.deleteGoodsByBoxId(box.getId()));
+
+        boxMapper.deleteBoxByAreaId(areaId);
+
+        areaMapper.deleteArea(areaId);
+
+        return true;
     }
 }

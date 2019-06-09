@@ -22,6 +22,11 @@
         where id = #{goodsId}
     </delete>
 
+    <delete id="deleteGoodsByBoxId">
+        delete from goods
+        where boxId = #{boxId}
+    </delete>
+
     <select id="getGoodsList" resultType="com.chao.storagebox.entity.Goods">
         SELECT
         t1.id as id,
