@@ -1,6 +1,7 @@
 package com.chao.storagebox.atom;
 
 
+import com.chao.storagebox.dao.GoodsMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
@@ -13,6 +14,9 @@ import java.util.List;
 public class BoxAtom {
 	@Resource
 	private BoxMapper boxMapper;
+
+	@Resource
+	private GoodsMapper goodsMapper;
 
 	public List<Box> getBoxList(String areaId) {
 		return boxMapper.getBoxList(areaId);
@@ -35,6 +39,8 @@ public class BoxAtom {
 
 	public boolean deleteBox(String boxId)
 	{
+		goodsMapper.deleteGoodsByBoxId(boxId);
+
 		return boxMapper.deleteBox(boxId) > 0;
 	}
 }

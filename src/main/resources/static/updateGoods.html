@@ -11,31 +11,59 @@
         a:hover{
             cursor: pointer;
         }
+        .waiting-class {
+            position: fixed;
+            display: none;
+            z-index: 100;
+            background: rgba(255,255,255,0.8);
+            width: 100%;
+            height: 100%;
+        }
+        .waiting-class img {
+            margin-top: 20%;
+            margin-left: 45%;
+            width: 8%;
+        }
     </style>
 </head>
 <body>
-<nav class="navbar fixed-top navbar-expand-sm bg-light navbar-light">
+<nav class="navbar fixed-top navbar-expand-sm bg-dark navbar-dark">
     <ul class="navbar-nav" style="margin: 0 auto;">
-        <li class="nav-item">
-            <a class="nav-link" href="home.html">主页</a>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                物品管理
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="home.html">查看物品</a>
+                <a class="dropdown-item" href="addGoods.html">添加物品</a>
+            </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="addGoods.html">添加物品</a>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                地区管理
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="showArea.html">查看地区</a>
+                <a class="dropdown-item" href="addArea.html">添加地区</a>
+            </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="showArea.html">地区管理</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="addArea.html">添加地区</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="showBox.html">箱子管理</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="addBox.html">添加箱子</a>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                箱子管理
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="showBox.html">查看箱子</a>
+                <a class="dropdown-item" href="addBox.html">添加箱子</a>
+            </div>
         </li>
     </ul>
 </nav>
+
+<div class="waiting-class">
+    <img src="img/mouse.gif">
+</div>
 
 <div id="updateGoodsDiv" class="container" style="width: 80%">
     <h2 class="text-center mb-3">修改物品</h2>
@@ -181,6 +209,8 @@
         },
         beforeCreate:function ()
         {
+            $(".waiting-class").show();
+
             var _self = this;
 
             $.get
@@ -204,6 +234,7 @@
             $.get(
                 "/goods?goodsId=" + goodsId,
                 function (res) {
+                    $(".waiting-class").hide();
                     _self.areaId = res.areaId;
                     _self.goodsId = res.id;
                     _self.boxId = res.boxId;
